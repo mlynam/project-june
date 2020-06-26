@@ -1,11 +1,8 @@
 package core
 
-// Init contains the initialization values for the core
-type Init struct {
-	Name   string
-	Width  int
-	Height int
-}
+import (
+	"github.com/mlynam/project-june/shaders"
+)
 
 // New is a function that initializes the core
 func New(init *Init) *Core {
@@ -15,6 +12,7 @@ func New(init *Init) *Core {
 	c.name = init.Name
 	c.width = init.Width
 	c.height = init.Height
+	c.shaders = make([]shaders.Shader, 0)
 
-	return c.initWindow()
+	return c.initWindow().initGraphics(&init.Graphics)
 }

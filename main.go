@@ -8,6 +8,8 @@ import (
 	"runtime"
 
 	"github.com/mlynam/project-june/core"
+	"github.com/mlynam/project-june/graphics"
+	"github.com/mlynam/project-june/shaders"
 )
 
 func main() {
@@ -17,6 +19,12 @@ func main() {
 		Name:   "Project June",
 		Width:  1920,
 		Height: 1080,
+		Graphics: graphics.Init{
+			Shaders: map[shaders.ShaderType]string{
+				shaders.Vertex:   "assets/shaders/basic.vert",
+				shaders.Fragment: "assets/shaders/basic.frag",
+			},
+		},
 	}
 
 	core.New(&init).Run()
