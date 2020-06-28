@@ -1,20 +1,20 @@
-package shaders
+package shader
 
 import "github.com/go-gl/gl/v4.1-core/gl"
 
-// ShaderType is strongly typed shader type
-type ShaderType uint32
+// Type is strongly typed shader type
+type Type uint32
 
 // Shader types
 const (
-	Vertex   ShaderType = gl.VERTEX_SHADER
-	Fragment ShaderType = gl.FRAGMENT_SHADER
+	Vertex   Type = gl.VERTEX_SHADER
+	Fragment Type = gl.FRAGMENT_SHADER
 )
 
 // Shader provides structure around pipeline shaders
 type Shader struct {
 	source     string
-	shaderType ShaderType
+	shaderType Type
 	shaderID   uint32
 }
 

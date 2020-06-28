@@ -10,9 +10,12 @@ func (c *Core) Run() {
 	defer glfw.Terminate()
 
 	for !c.window.ShouldClose() {
-		// TODO: update stuff
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 		gl.UseProgram(c.glProgram)
+
+		for _, r := range c.Renderables {
+			(*r).Render()
+		}
 
 		glfw.PollEvents()
 		c.window.SwapBuffers()

@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/mlynam/project-june/shaders"
+	"github.com/mlynam/project-june/shader"
 )
 
 // New is a function that initializes the core
@@ -12,7 +12,7 @@ func New(init *Init) *Core {
 	c.name = init.Name
 	c.width = init.Width
 	c.height = init.Height
-	c.shaders = make([]shaders.Shader, 0)
+	c.shaders = make([]shader.Shader, 0)
 
 	return c.initWindow().initGraphics(&init.Graphics)
 }

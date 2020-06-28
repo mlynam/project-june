@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/mlynam/project-june/graphics"
-	"github.com/mlynam/project-june/shaders"
+	"github.com/mlynam/project-june/shader"
 )
 
 func (c *Core) initGraphics(init *graphics.Init) *Core {
@@ -26,7 +26,7 @@ func (c *Core) initGraphics(init *graphics.Init) *Core {
 		}
 
 		source := string(bytes)
-		shader, ok := shaders.New(source, t)
+		shader, ok := shader.New(source, t)
 		if !ok {
 			panic("Failed to create vertex shader")
 		}
