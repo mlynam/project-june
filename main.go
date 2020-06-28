@@ -5,11 +5,13 @@ in the startup state.
 package main
 
 import (
+	"fmt"
 	"runtime"
 
 	"github.com/mlynam/project-june/core"
 	"github.com/mlynam/project-june/graphics"
 	"github.com/mlynam/project-june/shaders"
+	"github.com/qmuntal/gltf"
 )
 
 func main() {
@@ -26,6 +28,9 @@ func main() {
 			},
 		},
 	}
+
+	doc, _ := gltf.Open("assets/models/cube.gltf")
+	fmt.Print(doc)
 
 	core.New(&init).Run()
 }

@@ -13,9 +13,11 @@ func (obj *OBJ) UnmarshalBinary(data []byte) error {
 	b := bytes.NewBuffer(data)
 
 	var (
-		flag string
-		mat  string
-		err  error
+		flag   string
+		mtllib string
+		usemtl string
+		smooth string
+		err    error
 	)
 
 	for {
@@ -40,7 +42,11 @@ func (obj *OBJ) UnmarshalBinary(data []byte) error {
 			fmt.Fscanln(b, &v[0], &v[1], &v[2])
 			obj.normals = append(obj.normals, v)
 		case "mtllib":
-			fmt.Fscanln(b, &mat)
+			fmt.Fscanln(b, &mtllib)
+		case "usemtl":
+			fmt.Fscanln(b, &usemtl)
+		case "s":
+			fmt.Fscanln(b, &smooth)
 		default: // Skip anything not supported, like comments
 			b.ReadBytes(byte('\n'))
 		}

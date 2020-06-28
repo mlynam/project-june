@@ -7,4 +7,14 @@ type OBJ struct {
 	verts, normals []shared.Vector3
 	textureCoords  []shared.Vector2
 	name, filename string
+	faces          []OBJFace
+}
+
+// OBJFace describes a face in the model
+type OBJFace struct {
+	vertex   []shared.Vector3
+	normal   []shared.Vector3
+	uv       []shared.Vector2
+	material string
+	smooth   bool
 }
