@@ -1,24 +1,22 @@
 package renderable
 
 import (
-	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/go-gl/gl/v4.6-core/gl"
 	"github.com/mlynam/project-june/graphics"
 	"github.com/qmuntal/gltf"
 )
 
 // Unindexed renderables use simple vertex arrays to render data
 type Unindexed struct {
-	VertexBufferID   uint32
-	VertexArrayID    uint32
-	VertexByteOffset uint32
-	VertexByteLength uint32
-	VertexByteSize   uint32
+	VertexBufferID uint32
+	VertexArrayID  uint32
+	VertexCount    uint32
 }
 
 // Render renders an unindexed renderable
 func (m Unindexed) Render() {
 	gl.BindVertexArray(m.VertexArrayID)
-	gl.DrawArrays(gl.TRIANGLES, 0, int32(m.VertexByteLength/m.VertexByteSize))
+	gl.DrawArrays(gl.TRIANGLES, 0, int32(m.VertexCount))
 }
 
 // PrimitiveToUnindexed converts a gltf primitive into a renderable
@@ -33,24 +31,24 @@ func PrimitiveToUnindexed(p *gltf.Primitive, doc *gltf.Document) (graphics.Rende
 		return unindexed, false
 	}
 
+	length := int(view.ByteLength)
+	slice := buffer.Data[view.ByteOffset : view.ByteOffset+view.ByteLength]
+
 	var vbo uint32
 	gl.GenBuffers(1, &vbo)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.BufferData(gl.ARRAY_BUFFER, int(view.ByteLength), gl.Ptr(buffer.Data), gl.STATIC_DRAW)
-	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
+	gl.BufferData(gl.ARRAY_BUFFER, length, gl.Ptr(slice), gl.STATIC_DRAW)
 
 	var vao uint32
 	gl.GenVertexArrays(1, &vao)
 	gl.BindVertexArray(vao)
 	gl.EnableVertexArrayAttrib(vao, 0)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
-	gl.VertexAttribPointer(0, 3, gl.FLOAT, false, 0, nil)
+	gl.VertexAttribPointer(0, 3, gl.FLOAT, accessor.Normalized, int32(view.ByteStride), nil)
 
 	unindexed.VertexBufferID = vbo
 	unindexed.VertexArrayID = vao
-	unindexed.VertexByteLength = view.ByteLength
-	unindexed.VertexByteOffset = view.ByteOffset
-	unindexed.VertexByteSize = 12
+	unindexed.VertexCount = accessor.Count
 
 	err := gl.GetError()
 	if err != gl.NO_ERROR {

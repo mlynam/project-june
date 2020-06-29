@@ -10,12 +10,12 @@ import (
 )
 
 const (
-	triangleSource = "assets/models/TriangleWithoutIndices.gltf"
-	meshLoadError  = "Failed to load mesh data with name %v\n"
+	source        = "assets/scene/BoxTaurus.gltf"
+	meshLoadError = "Failed to load mesh data with name %v\n"
 )
 
-func configStartMenuScene(c *core.Core) {
-	doc, _ := gltf.Open(triangleSource)
+func config(c *core.Core) {
+	doc, _ := gltf.Open(source)
 	meshes := make([]*graphics.Render, 0)
 
 	for _, mesh := range doc.Meshes {

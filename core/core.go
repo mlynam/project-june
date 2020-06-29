@@ -17,4 +17,5 @@ type Core struct {
 	shaders   []shader.Shader
 
 	Renderables []*graphics.Render
+	Cameras     []*graphics.Camera
 }

@@ -1,6 +1,6 @@
 package shader
 
-import "github.com/go-gl/gl/v4.1-core/gl"
+import "github.com/go-gl/gl/v4.6-core/gl"
 
 // Type is strongly typed shader type
 type Type uint32

@@ -17,8 +17,8 @@ func main() {
 
 	init := core.Init{
 		Name:   "Project June",
-		Width:  1920,
-		Height: 1080,
+		Width:  800,
+		Height: 800,
 		Graphics: graphics.Init{
 			Shaders: map[shader.Type]string{
 				shader.Vertex:   "assets/shaders/basic.vert",
@@ -27,5 +27,5 @@ func main() {
 		},
 	}
 
-	core.New(&init).Config(configStartMenuScene).Run()
+	core.New(&init).Config(config).Run()
 }
