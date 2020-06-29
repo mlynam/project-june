@@ -6,7 +6,7 @@ import (
 
 // Object is the base game engine object type
 type Object struct {
-	position mgl32.Vec3
-	scale    mgl32.Vec3
-	rotation mgl32.Vec4
+	Position mgl32.Vec3
+	Scale    mgl32.Vec3
+	Rotation mgl32.Vec4
 }
