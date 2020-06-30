@@ -9,9 +9,9 @@ import (
 // Camera provides data required to setup a scene camera
 type Camera struct {
 	shared.Object
-	FieldOfView float64
-	ZFar        float64
-	ZNear       float64
+	FieldOfView float32
+	ZFar        float32
+	ZNear       float32
 }
 
 // SetUniformCamera sets the `camera` input in the shader program
@@ -20,5 +20,6 @@ func (c *Camera) SetUniformCamera(program uint32) {
 	rotation := c.Rotation.Quat().Mat4()
 	position := mgl32.Mat4FromRows(mgl32.Vec4{1}, mgl32.Vec4{0, 1}, mgl32.Vec4{0, 0, 1}, c.Position.Vec4(1))
 	camera := rotation.Mul4(position)
+
 	gl.UniformMatrix4fv(location, 1, false, &camera[0])
 }

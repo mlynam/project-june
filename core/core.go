@@ -2,7 +2,6 @@ package core
 
 import (
 	"github.com/go-gl/glfw/v3.2/glfw"
-	"github.com/mlynam/project-june/graphics"
 	"github.com/mlynam/project-june/shader"
 )
 
@@ -16,6 +15,5 @@ type Core struct {
 	glProgram uint32
 	shaders   []shader.Shader
 
-	Renderables []*graphics.Render
-	Cameras     []*graphics.Camera
+	Scene *Scene
 }

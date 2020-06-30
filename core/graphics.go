@@ -15,7 +15,7 @@ func (c *Core) initGraphics(init *graphics.Init) *Core {
 	}
 
 	version := gl.GoStr(gl.GetString(gl.VERSION))
-	log.Println("OpenGL version", version)
+	log.Println("INFO OpenGL version", version)
 
 	prog := gl.CreateProgram()
 

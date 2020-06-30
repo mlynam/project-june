@@ -13,8 +13,8 @@ func (c *Core) Run() {
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 		gl.UseProgram(c.glProgram)
 
-		for _, r := range c.Renderables {
-			(*r).Render()
+		for _, renderable := range c.Scene.Renderables {
+			renderable.Render()
 		}
 
 		glfw.PollEvents()

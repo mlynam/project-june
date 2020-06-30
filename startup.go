@@ -1,11 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"github.com/mlynam/project-june/core"
-	"github.com/mlynam/project-june/graphics"
-	"github.com/mlynam/project-june/graphics/renderable"
+	"github.com/mlynam/project-june/dataloader"
 	"github.com/qmuntal/gltf"
 )
 
@@ -16,19 +13,18 @@ const (
 
 func config(c *core.Core) {
 	doc, _ := gltf.Open(source)
-	meshes := make([]*graphics.Render, 0)
 
-	for _, mesh := range doc.Meshes {
-		for _, primitive := range mesh.Primitives {
-			renderable, ok := renderable.PrimitiveToUnindexed(primitive, doc)
+	c.Scene = dataloader.LoadScene(doc)
 
-			if ok {
-				meshes = append(meshes, &renderable)
-			} else {
-				log.Printf(meshLoadError, mesh.Name)
-			}
-		}
-	}
-
-	c.Renderables = meshes
+	// for {
+	// 	select {
+	// 	case status := <-task.Status:
+	// 		fmt.Println(status)
+	// 	case <-task.Done:
+	// 		c.Scene =
+	// 		return
+	// 	default:
+	// 		glfw.PollEvents()
+	// 	}
+	// }
 }
