@@ -6,25 +6,16 @@ import (
 	"github.com/qmuntal/gltf"
 )
 
-const (
-	source        = "assets/scene/BoxTaurus.gltf"
-	meshLoadError = "Failed to load mesh data with name %v\n"
-)
+const source = "assets/scene/BoxTaurus.gltf"
 
 func config(c *core.Core) {
 	doc, _ := gltf.Open(source)
 
-	c.Scene = dataloader.LoadScene(doc)
+	c.Scene = dataloader.LoadScene(doc, c.OpenGLProgram())
+	if c.Scene.Camera == nil {
+		panic("No valid DefaultCamera found")
+	}
 
-	// for {
-	// 	select {
-	// 	case status := <-task.Status:
-	// 		fmt.Println(status)
-	// 	case <-task.Done:
-	// 		c.Scene =
-	// 		return
-	// 	default:
-	// 		glfw.PollEvents()
-	// 	}
-	// }
+	c.Scene.Camera.AspectRatio = c.AspectRatio()
+	c.Scene.Updatables = append(c.Scene.Updatables, c)
 }

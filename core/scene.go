@@ -7,7 +7,7 @@ import (
 
 // Scene contains all scene data
 type Scene struct {
-	Cameras     []*graphics.Camera
-	Renderables []*graphics.Renderable
-	Objects     []*shared.Object
+	Renderables []graphics.Renderable
+	Updatables  []shared.Updatable
+	Camera      *graphics.Camera
 }

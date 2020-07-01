@@ -1,8 +1,10 @@
 package core
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/mlynam/project-june/graphics"
@@ -17,7 +19,7 @@ func (c *Core) initGraphics(init *graphics.Init) *Core {
 	version := gl.GoStr(gl.GetString(gl.VERSION))
 	log.Println("INFO OpenGL version", version)
 
-	prog := gl.CreateProgram()
+	program := gl.CreateProgram()
 
 	for t, path := range init.Shaders {
 		bytes, err := ioutil.ReadFile(path)
@@ -28,17 +30,33 @@ func (c *Core) initGraphics(init *graphics.Init) *Core {
 		source := string(bytes)
 		shader, ok := shader.New(source, t)
 		if !ok {
-			panic("Failed to create vertex shader")
+			panic("Failed to create shader")
 		}
 
-		gl.AttachShader(prog, shader.GetID())
+		gl.AttachShader(program, shader.GetID())
 
 		c.shaders = append(c.shaders, shader)
 	}
 
-	gl.LinkProgram(prog)
+	gl.LinkProgram(program)
 
-	c.glProgram = prog
+	ensureProgramLinkSuccess(program)
+
+	c.glProgram = program
 
 	return c
+}
+
+func ensureProgramLinkSuccess(program uint32) {
+	var status int32
+	gl.GetProgramiv(program, gl.LINK_STATUS, &status)
+	if status == gl.FALSE {
+		var logLength int32
+		gl.GetProgramiv(program, gl.INFO_LOG_LENGTH, &logLength)
+
+		log := strings.Repeat("\x00", int(logLength+1))
+		gl.GetProgramInfoLog(program, logLength, nil, gl.Str(log))
+
+		panic(fmt.Sprintf("failed to link program: %v", log))
+	}
 }

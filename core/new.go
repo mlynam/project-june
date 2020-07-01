@@ -13,6 +13,7 @@ func New(init *Init) *Core {
 	c.width = init.Width
 	c.height = init.Height
 	c.shaders = make([]shader.Shader, 0)
+	c.secondsSinceLastFPSUpdate = 1
 
 	return c.initWindow().initGraphics(&init.Graphics)
 }
