@@ -8,24 +8,25 @@ import (
 	"runtime"
 
 	"github.com/mlynam/project-june/core"
-	"github.com/mlynam/project-june/graphics"
-	"github.com/mlynam/project-june/shader"
+	"github.com/mlynam/project-june/game"
+	"github.com/mlynam/project-june/graphics/shader"
+	"github.com/mlynam/project-june/shared"
+)
+
+var (
+	world   *game.World
+	program *shader.Program
 )
 
 func main() {
 	runtime.LockOSThread()
 
-	init := core.Init{
-		Name:   "Project June",
-		Width:  1920,
-		Height: 1080,
-		Graphics: graphics.Init{
-			Shaders: map[shader.Type]string{
-				shader.Vertex:   "assets/shaders/basic.vert",
-				shader.Fragment: "assets/shaders/basic.frag",
-			},
-		},
-	}
+	builder := core.NewBuilder()
 
-	core.New(&init).Config(config).Run()
+	builder.UseLoop(func(c *shared.Context) {
+		world.Update(c)
+		world.Render(program)
+	})
+
+	builder.Build().Run()
 }

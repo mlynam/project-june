@@ -14,6 +14,6 @@ const (
 )
 
 // State returns the current state of the core
-func (c *Core) State() State {
+func (c *core) State() State {
 	return c.state
 }

@@ -2,7 +2,7 @@ package core
 
 import "github.com/go-gl/glfw/v3.2/glfw"
 
-func (c *Core) initWindow() *Core {
+func (c *core) initWindow() *core {
 	if err := glfw.Init(); err != nil {
 		panic(err)
 	}

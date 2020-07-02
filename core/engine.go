@@ -1,8 +1,8 @@
-package shared
+package core
 
 // Platform provides information about the platform the engine is running on
-type Platform interface {
+type Engine interface {
+	Run()
 	AspectRatio() float32
-	OpenGLProgram() uint32
 	Name() string
 }

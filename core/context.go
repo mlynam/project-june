@@ -1,16 +1,16 @@
-package shared
+package core
 
 // Context of the currently rendering frame
 type Context struct {
-	delta    float64
-	platform Platform
+	delta  float64
+	engine Engine
 }
 
 // NewContext returns a context with the parameters provided
-func NewContext(delta float64, platform Platform) *Context {
+func NewContext(delta float64, engine Engine) *Context {
 	return &Context{
 		delta,
-		platform,
+		engine,
 	}
 }
 
@@ -20,6 +20,6 @@ func (c *Context) TimeDelta() float64 {
 }
 
 // Platform for the given context
-func (c *Context) Platform() Platform {
-	return c.platform
+func (c *Context) Platform() Engine {
+	return c.engine
 }

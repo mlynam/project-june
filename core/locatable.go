@@ -1,4 +1,4 @@
-package shared
+package core
 
 import "github.com/go-gl/mathgl/mgl32"
 

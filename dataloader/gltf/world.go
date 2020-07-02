@@ -1,15 +1,17 @@
-package dataloader
+package gltf
 
 import (
-	"github.com/mlynam/project-june/core"
+	"log"
+
 	"github.com/mlynam/project-june/game"
 	"github.com/mlynam/project-june/graphics"
+	"github.com/mlynam/project-june/graphics/mesh"
 	"github.com/mlynam/project-june/shared"
 	"github.com/qmuntal/gltf"
 )
 
-// LoadScene loads a document and signals when complete
-func LoadScene(doc *gltf.Document, program uint32) *core.Scene {
+// LoadWorldFromGLTF loads a document and signals when complete
+func LoadWorldFromGLTF(doc *gltf.Document) *game.World {
 	objects := make([]*shared.Object, len(doc.Nodes))
 	renderables := make([]graphics.Renderable, 0)
 	var camera *graphics.Camera
@@ -33,12 +35,35 @@ func LoadScene(doc *gltf.Document, program uint32) *core.Scene {
 		}
 
 		if node.Mesh != nil {
-			model, ok := LoadModel(doc.Meshes[*node.Mesh], doc, program)
+			for _, primitive := range doc.Meshes[*node.Mesh].Primitives {
+				builder := mesh.Builder{}
+				vertexID, ok := primitive.Attributes["POSITION"]
 
-			if ok {
-				for _, mesh := range model.Meshes {
-					mesh.World = object
-					renderables = append(renderables, &mesh)
+				if !ok {
+					log.Print("WARN gltf failed to provide position data for primitive")
+					continue
+				}
+
+				accessor := doc.Accessors[vertexID]
+				view := doc.BufferViews[*accessor.BufferView]
+				buffer := doc.Buffers[view.Buffer]
+				slice := buffer.Data[view.ByteOffset : view.ByteOffset+view.ByteLength]
+
+				builder.SetPositionData(view.ByteLength, slice)
+
+				indexID := primitive.Indices
+				if indexID != nil {
+					accessor = doc.Accessors[*indexID]
+					view = doc.BufferViews[*accessor.BufferView]
+					buffer = doc.Buffers[view.Buffer]
+					slice = buffer.Data[view.ByteOffset : view.ByteOffset+view.ByteLength]
+
+					builder.SetIndexData(view.ByteLength, slice)
+				}
+
+				mesh := builder.Build(object)
+				if mesh != nil {
+					renderables = append(renderables, mesh)
 				}
 			}
 		}
@@ -77,9 +102,5 @@ func LoadScene(doc *gltf.Document, program uint32) *core.Scene {
 		}
 	}
 
-	return &core.Scene{
-		Camera:      camera,
-		Updatables:  updatable,
-		Renderables: renderables,
-	}
+	return game.NewWorld(camera, renderables, updatable)
 }
