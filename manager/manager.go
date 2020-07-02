@@ -1,36 +1,48 @@
-package gltf
+package manager
 
 import (
+	"fmt"
 	"log"
 
+	"github.com/mlynam/project-june/engine"
 	"github.com/mlynam/project-june/game"
 	"github.com/mlynam/project-june/graphics"
 	"github.com/mlynam/project-june/graphics/mesh"
-	"github.com/mlynam/project-june/shared"
+	"github.com/mlynam/project-june/util"
 	"github.com/qmuntal/gltf"
 )
 
-// LoadWorldFromGLTF loads a document and signals when complete
-func LoadWorldFromGLTF(doc *gltf.Document) *game.World {
-	objects := make([]*shared.Object, len(doc.Nodes))
-	renderables := make([]graphics.Renderable, 0)
-	var camera *graphics.Camera
+// Manager enables the current scene and world to load assets
+type Manager struct{}
+
+// LoadStartScene loads the scene with the given name and initializes a new world and scene
+func (m *Manager) LoadStartScene(name string) (engine.Scene, engine.World) {
+	path := fmt.Sprintf("assets/scenes/%v", name)
+	doc, err := gltf.Open(path)
+	if err != nil {
+		panic(fmt.Errorf("Failed to load the start scene: %v", path))
+	}
+
+	var camera **graphics.Camera
+
+	world := game.NewWorld()
+	scene := game.NewScene(*camera)
+
+	objects := make([]*game.Object, len(doc.Nodes))
 
 	for i, node := range doc.Nodes {
-		object := &shared.Object{
-			Name:     node.Name,
-			Position: shared.Vec3Convert64To32(node.Translation),
-			Scale:    shared.Vec3Convert64To32(node.Scale),
-			Rotation: shared.Vec4Convert64ToQuat(node.Rotation),
-		}
+		position := util.Vec3Convert64To32(node.Translation)
+		scale := util.Vec3Convert64To32(node.Scale)
+		rotation := util.Vec4Convert64ToQuat(node.Rotation)
+
+		object := game.NewObject(node.Name, position, scale, rotation)
 
 		if len(node.Children) > 0 {
 			min := node.Children[0]
 			max := node.Children[len(node.Children)-1] + 1
-			object.Children = objects[min:max]
 
-			for _, child := range object.Children {
-				child.Parent = object
+			for _, child := range objects[min:max] {
+				object.AddChild(child)
 			}
 		}
 
@@ -63,7 +75,7 @@ func LoadWorldFromGLTF(doc *gltf.Document) *game.World {
 
 				mesh := builder.Build(object)
 				if mesh != nil {
-					renderables = append(renderables, mesh)
+					scene.AddRenderable(mesh)
 				}
 			}
 		}
@@ -74,12 +86,14 @@ func LoadWorldFromGLTF(doc *gltf.Document) *game.World {
 					perspective := doc.Cameras[*idx].Perspective
 
 					if perspective != nil {
-						camera = &graphics.Camera{
+						c := &graphics.Camera{
 							Object:      object,
 							FieldOfView: float32(perspective.Yfov),
 							ZFar:        float32(*perspective.Zfar),
 							ZNear:       float32(perspective.Znear),
 						}
+
+						camera = &c
 
 						// We use the first camera we find in the DefaultCamera object
 						break
@@ -89,18 +103,8 @@ func LoadWorldFromGLTF(doc *gltf.Document) *game.World {
 		}
 
 		objects[i] = object
+		world.AddObject(object)
 	}
 
-	updatable := make([]shared.Updatable, len(objects))
-	for i, object := range objects {
-		if object.Name == "Cube" {
-			updatable[i] = &game.Rotator{
-				Object: object,
-			}
-		} else {
-			updatable[i] = object
-		}
-	}
-
-	return game.NewWorld(camera, renderables, updatable)
+	return scene, world
 }

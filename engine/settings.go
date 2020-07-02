@@ -1,7 +1,12 @@
 package engine
 
+// SettingsProvider gets the engine settings
+type SettingsProvider interface {
+	New() Settings
+}
+
 // Settings for the engine
-type Settings struct {
-	Name       string
-	Resolution []uint16
+type Settings interface {
+	Name() string
+	Resolution() [2]uint16
 }

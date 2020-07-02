@@ -2,11 +2,11 @@ package engine
 
 // Context of the current frame
 type Context struct {
-	Window   Window
-	Graphics Graphics
+	previousFrameTime float64
+	frameTime         float64
 }
 
-// Delta time for the frame
+// Delta returns the frame delta in seconds
 func (c *Context) Delta() float64 {
-	return 0
+	return c.frameTime - c.previousFrameTime
 }

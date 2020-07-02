@@ -1,7 +1,9 @@
 package engine
 
-// Updatable will be updated during the engine loop
-type Updatable interface {
+// Object is a world object
+type Object interface {
+	Locatable
+
 	Update(*Context)
 
 	// Synchronize perform any internal updates needed for the next render

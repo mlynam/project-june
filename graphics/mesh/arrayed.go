@@ -1,8 +1,8 @@
 package mesh
 
 import (
-	"github.com/mlynam/project-june/graphics/gl"
-	"github.com/mlynam/project-june/graphics/shader"
+	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/mlynam/project-june/engine"
 )
 
 // Arrayed meshes draw without an index
@@ -13,8 +13,8 @@ type Arrayed struct {
 }
 
 // Render the arrayed mesh
-func (a *Arrayed) Render(program *shader.Program) {
-	ok := a.SetupDraw(program)
+func (a *Arrayed) Render(g engine.Graphics) {
+	ok := a.SetupDraw(g)
 
 	if ok {
 		gl.BindVertexArray(a.vertexArrayBufferID)

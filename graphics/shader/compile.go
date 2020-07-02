@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mlynam/project-june/graphics/gl"
+	"github.com/go-gl/gl/v4.1-core/gl"
 )
 
 func (shader *Shader) compile() bool {

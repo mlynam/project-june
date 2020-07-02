@@ -1,9 +1,8 @@
 package mesh
 
 import (
-	"github.com/mlynam/project-june/graphics"
-	"github.com/mlynam/project-june/graphics/gl"
-	"github.com/mlynam/project-june/shared"
+	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/mlynam/project-june/engine"
 )
 
 // Builder provides functions to build a mesh and load it into memory
@@ -30,9 +29,9 @@ func (b *Builder) SetIndexData(bytesPerIndex uint32, data []byte) *Builder {
 }
 
 // Build the mesh and tie it to a locatable object
-func (b *Builder) Build(world shared.Locatable) graphics.Renderable {
+func (b *Builder) Build(world engine.Locatable) engine.Renderable {
 	indexable := b.isIndexable()
-	var mesh graphics.Renderable
+	var mesh engine.Renderable
 	var vertexArrayBuffer uint32
 
 	if !indexable {

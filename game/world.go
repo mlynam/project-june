@@ -1,37 +1,25 @@
 package game
 
-import (
-	"github.com/mlynam/project-june/graphics"
-	"github.com/mlynam/project-june/graphics/shader"
-	"github.com/mlynam/project-june/shared"
-)
+import "github.com/mlynam/project-june/engine"
 
-// World contains the base elements that make up the game world
+// World containing the game objects
 type World struct {
-	camera     *graphics.Camera
-	renderable []graphics.Renderable
-	updatable  []shared.Updatable
+	objects []engine.Object
 }
 
-// NewWorld creates a new game world given the base elements
-func NewWorld(camera *graphics.Camera, renderables []graphics.Renderable, updatables []shared.Updatable) *World {
+// NewWorld with no objects
+func NewWorld() *World {
 	return &World{
-		camera:     camera,
-		renderable: renderables,
-		updatable:  updatables,
+		objects: make([]engine.Object, 0),
 	}
 }
 
-// Update the world with the given context
-func (w *World) Update(c *shared.Context) {
-	for _, updatable := range w.updatable {
-		updatable.Update(c)
-	}
+// Objects of the world
+func (w *World) Objects() []engine.Object {
+	return w.objects
 }
 
-// Render the world with the given shader program
-func (w *World) Render(p *shader.Program) {
-	for _, renderable := range w.renderable {
-		renderable.Render(p)
-	}
+// AddObject to the world
+func (w *World) AddObject(o *Object) {
+	w.objects = append(w.objects, o)
 }

@@ -1,8 +1,12 @@
-package core
+package platform
 
-import "github.com/go-gl/glfw/v3.2/glfw"
+import (
+	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/mlynam/project-june/engine"
+)
 
-func (c *core) initWindow() *core {
+// NewWindow creates a new window
+func (p *Provider) NewWindow(s engine.Settings) engine.Window {
 	if err := glfw.Init(); err != nil {
 		panic(err)
 	}
@@ -13,14 +17,15 @@ func (c *core) initWindow() *core {
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
-	window, err := glfw.CreateWindow(c.width, c.height, c.name, nil, nil)
+	width := s.Resolution()[0]
+	height := s.Resolution()[1]
+
+	window, err := glfw.CreateWindow(int(width), int(height), s.Name(), nil, nil)
 	if err != nil {
 		panic(err)
 	}
 
 	window.MakeContextCurrent()
 
-	c.window = window
-
-	return c
+	return window
 }

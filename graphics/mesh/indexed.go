@@ -1,8 +1,8 @@
 package mesh
 
 import (
-	"github.com/mlynam/project-june/graphics/gl"
-	"github.com/mlynam/project-june/graphics/shader"
+	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/mlynam/project-june/engine"
 )
 
 // Indexed draws by indexed vertices
@@ -14,8 +14,8 @@ type Indexed struct {
 }
 
 // Render an indexed mesh
-func (i *Indexed) Render(program *shader.Program) {
-	ok := i.SetupDraw(program)
+func (i *Indexed) Render(g engine.Graphics) {
+	ok := i.SetupDraw(g)
 
 	if ok {
 		gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, i.indexBufferObjectID)
