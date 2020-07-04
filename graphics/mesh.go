@@ -8,14 +8,11 @@ import (
 
 // Mesh tracks vertex array data loaded into the graphics card memory
 type Mesh struct {
-	data  []byte
-	index []byte
+	data, index []byte
 
 	// vao, vbo, and ibo are the vertex array object, vertex buffer object, and
 	// index buffer object in graphics memory, respectively
-	vao uint32
-	vbo uint32
-	ibo uint32
+	vao, vbo, ibo uint32
 
 	// count is the number of indices to render
 	count uint32
@@ -70,16 +67,8 @@ func (m *Mesh) Render(g engine.Graphics) {
 		gl.UniformMatrix4fv(index, 1, false, &transform[0])
 	}
 
-	for _, attr := range m.attributes {
-		index, ok := g.Attribute(attr.Name)
-		if ok {
-			gl.EnableVertexAttribArray(uint32(index))
-		}
-	}
-
-	// var indexOffset uint32 = 0
-	gl.DrawElements(gl.TRIANGLES, int32(m.count), m.xtype, nil)
-	g.EnsureSuccessState()
+	var offset uint32 = 0
+	gl.DrawElements(gl.TRIANGLES, int32(m.count), m.xtype, gl.Ptr(&offset))
 
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, 0)
 	gl.BindVertexArray(0)

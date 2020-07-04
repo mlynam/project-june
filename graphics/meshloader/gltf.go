@@ -36,6 +36,9 @@ var (
 var (
 	supported = []string{
 		"POSITION",
+		"NORMAL",
+		"TANGENT",
+		"TEXCOORD_0",
 	}
 )
 
@@ -49,7 +52,11 @@ func LoadFromGLTFDoc(doc *gltf.Document, p *gltf.Primitive, locatable engine.Loc
 	attributes := make([]vertex.Attribute, 0)
 
 	for _, attr := range supported {
-		i := p.Attributes[attr]
+		i, ok := p.Attributes[attr]
+		if !ok {
+			continue
+		}
+
 		accessor := doc.Accessors[i]
 		if accessor.BufferView == nil {
 			log.Printf("WARN invalid accessor data for %v", accessor.Name)
