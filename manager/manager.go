@@ -2,31 +2,32 @@ package manager
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/mlynam/project-june/engine"
 	"github.com/mlynam/project-june/game"
 	"github.com/mlynam/project-june/graphics"
-	"github.com/mlynam/project-june/graphics/mesh"
+	"github.com/mlynam/project-june/graphics/meshloader"
 	"github.com/mlynam/project-june/util"
 	"github.com/qmuntal/gltf"
 )
 
 // Manager enables the current scene and world to load assets
-type Manager struct{}
+type Manager struct {
+	settings engine.Settings
+	graphics engine.Graphics
+}
 
 // LoadStartScene loads the scene with the given name and initializes a new world and scene
 func (m *Manager) LoadStartScene(name string) (engine.Scene, engine.World) {
-	path := fmt.Sprintf("assets/scenes/%v", name)
+	path := fmt.Sprintf("assets/scene/%v.gltf", name)
 	doc, err := gltf.Open(path)
 	if err != nil {
 		panic(fmt.Errorf("Failed to load the start scene: %v", path))
 	}
 
-	var camera **graphics.Camera
-
+	camera := &graphics.Camera{}
 	world := game.NewWorld()
-	scene := game.NewScene(*camera)
+	scene := game.NewScene(camera)
 
 	objects := make([]*game.Object, len(doc.Nodes))
 
@@ -48,32 +49,7 @@ func (m *Manager) LoadStartScene(name string) (engine.Scene, engine.World) {
 
 		if node.Mesh != nil {
 			for _, primitive := range doc.Meshes[*node.Mesh].Primitives {
-				builder := mesh.Builder{}
-				vertexID, ok := primitive.Attributes["POSITION"]
-
-				if !ok {
-					log.Print("WARN gltf failed to provide position data for primitive")
-					continue
-				}
-
-				accessor := doc.Accessors[vertexID]
-				view := doc.BufferViews[*accessor.BufferView]
-				buffer := doc.Buffers[view.Buffer]
-				slice := buffer.Data[view.ByteOffset : view.ByteOffset+view.ByteLength]
-
-				builder.SetPositionData(view.ByteLength, slice)
-
-				indexID := primitive.Indices
-				if indexID != nil {
-					accessor = doc.Accessors[*indexID]
-					view = doc.BufferViews[*accessor.BufferView]
-					buffer = doc.Buffers[view.Buffer]
-					slice = buffer.Data[view.ByteOffset : view.ByteOffset+view.ByteLength]
-
-					builder.SetIndexData(view.ByteLength, slice)
-				}
-
-				mesh := builder.Build(object)
+				mesh := meshloader.LoadFromGLTFDoc(doc, primitive, object)
 				if mesh != nil {
 					scene.AddRenderable(mesh)
 				}
@@ -86,14 +62,11 @@ func (m *Manager) LoadStartScene(name string) (engine.Scene, engine.World) {
 					perspective := doc.Cameras[*idx].Perspective
 
 					if perspective != nil {
-						c := &graphics.Camera{
-							Object:      object,
-							FieldOfView: float32(perspective.Yfov),
-							ZFar:        float32(*perspective.Zfar),
-							ZNear:       float32(perspective.Znear),
-						}
-
-						camera = &c
+						camera.Object = object
+						camera.FieldOfView = float32(perspective.Yfov)
+						camera.ZFar = float32(*perspective.Zfar)
+						camera.ZNear = float32(perspective.Znear)
+						camera.AspectRatio = float32(m.settings.Resolution()[0]) / float32(m.settings.Resolution()[1])
 
 						// We use the first camera we find in the DefaultCamera object
 						break

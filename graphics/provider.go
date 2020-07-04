@@ -1,10 +1,8 @@
 package graphics
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
-	"strings"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/mlynam/project-june/engine"
@@ -47,21 +45,14 @@ func (p *Provider) New(s engine.Settings) engine.Graphics {
 
 	gl.LinkProgram(program)
 
-	ensureProgramLinkSuccess(program)
+	g := NewGraphics(program)
 
-	return &Graphics{program}
-}
+	gl.UseProgram(program)
+	gl.Enable(gl.DEPTH_TEST)
+	gl.DepthFunc(gl.LESS)
+	gl.ClearColor(100/256.0, 149/256.0, 237/256.0, 1.0)
 
-func ensureProgramLinkSuccess(program uint32) {
-	var status int32
-	gl.GetProgramiv(program, gl.LINK_STATUS, &status)
-	if status == gl.FALSE {
-		var logLength int32
-		gl.GetProgramiv(program, gl.INFO_LOG_LENGTH, &logLength)
+	g.EnsureSuccessState()
 
-		log := strings.Repeat("\x00", int(logLength+1))
-		gl.GetProgramInfoLog(program, logLength, nil, gl.Str(log))
-
-		panic(fmt.Sprintf("failed to link program: %v", log))
-	}
+	return g
 }

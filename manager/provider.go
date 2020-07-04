@@ -6,6 +6,6 @@ import "github.com/mlynam/project-june/engine"
 type Provider struct{}
 
 // New creates a manager
-func (p *Provider) New(s engine.Settings) engine.Manager {
-	return &Manager{}
+func (p *Provider) New(s engine.Settings, g engine.Graphics) engine.Manager {
+	return &Manager{s, g}
 }

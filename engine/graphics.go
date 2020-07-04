@@ -9,8 +9,10 @@ type GraphicsProvider interface {
 type Graphics interface {
 	// Program is the shader program currently attached to the graphics pipeline
 	Program() uint32
+	Clear()
 
 	SetProgram(uint32)
 	Attribute(name string) (int32, bool)
 	Uniform(name string) (int32, bool)
+	EnsureSuccessState()
 }

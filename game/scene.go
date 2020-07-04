@@ -19,6 +19,11 @@ func NewScene(c *graphics.Camera) *Scene {
 	}
 }
 
+// SetupScene for rendering
+func (s *Scene) SetupScene(g engine.Graphics) {
+	s.camera.SetTransformations(g.Program())
+}
+
 // Renderables to render
 func (s *Scene) Renderables() []engine.Renderable {
 	return s.renderables

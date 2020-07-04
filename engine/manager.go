@@ -2,7 +2,7 @@ package engine
 
 // ManagerProvider loads scenes
 type ManagerProvider interface {
-	New(Settings) Manager
+	New(Settings, Graphics) Manager
 }
 
 // Manager ties together world and scene logic

@@ -31,7 +31,8 @@ func NewObject(name string, position, scale mgl32.Vec3, rotation mgl32.Quat) *Ob
 }
 
 // Update the object
-func (o *Object) Update(c *engine.Context) {}
+func (o *Object) Update(c *engine.Context) {
+}
 
 // Synchronize the object
 func (o *Object) Synchronize() {
