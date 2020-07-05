@@ -9,6 +9,7 @@ import (
 // Mesh tracks vertex array data loaded into the graphics card memory
 type Mesh struct {
 	data, index []byte
+	vertices    []vertex.Vertex
 
 	// vao, vbo, and ibo are the vertex array object, vertex buffer object, and
 	// index buffer object in graphics memory, respectively
