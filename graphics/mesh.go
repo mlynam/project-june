@@ -86,8 +86,7 @@ func (m *Mesh) load(g engine.Graphics) {
 	gl.BufferData(gl.ARRAY_BUFFER, len(m.vertices)*size, gl.Ptr(&m.vertices[0]), gl.STATIC_DRAW)
 
 	// Setup index data
-	size = int(unsafe.Sizeof(m.index[0]))
-	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(m.index)*size, gl.Ptr(&m.index[0]), gl.STATIC_DRAW)
+	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(m.index)*4, gl.Ptr(&m.index[0]), gl.STATIC_DRAW)
 
 	// Unbind
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)

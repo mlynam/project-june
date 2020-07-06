@@ -1,6 +1,8 @@
 package meshloader
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"log"
 	"strings"
@@ -37,7 +39,7 @@ var (
 	supported = []string{
 		"POSITION",
 		"NORMAL",
-		"TANGENT",
+		"COLOR",
 		"TEXCOORD_0",
 	}
 )
@@ -46,6 +48,29 @@ var (
 func LoadFromGLTFDoc(doc *gltf.Document, p *gltf.Primitive, locatable engine.Locatable) *graphics.Mesh {
 	if p.Indices == nil {
 		panic(fmt.Errorf("unindexed mesh unsupported"))
+	}
+
+	var (
+		positions *bytes.Reader
+		normals   *bytes.Reader
+		colors    *bytes.Reader
+		uvs       *bytes.Reader
+		reference vertex.Vertex
+		err       error
+
+		vertices = make([]vertex.Vertex, 0)
+	)
+
+	for {
+		vertex := vertex.Vertex{}
+
+		if positions != nil {
+			err = binary.Read(positions, binary.LittleEndian, &vertex.Position)
+		}
+
+		if normals != nil {
+			err = binary.Read(normals, binary.LittleEndian, &vertex.Normal)
+		}
 	}
 
 	data := make([]byte, 0)
@@ -92,8 +117,9 @@ func LoadFromGLTFDoc(doc *gltf.Document, p *gltf.Primitive, locatable engine.Loc
 		mesh.AddAttribute(attr)
 	}
 
-	mesh.SetElementCount(accessor.Count)
-	mesh.SetElementType(xtypes[accessor.ComponentType])
-
 	return mesh
+}
+
+func tryReadComponent(b *bytes.Reader, data interface{}) {
+
 }
