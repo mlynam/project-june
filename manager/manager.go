@@ -2,6 +2,7 @@ package manager
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/mlynam/project-june/engine"
 	"github.com/mlynam/project-june/game"
@@ -63,7 +64,7 @@ func (m *Manager) LoadStartScene(name string) (engine.Scene, engine.World) {
 
 					if perspective != nil {
 						camera.Object = object
-						camera.FieldOfView = float32(perspective.Yfov)
+						camera.FieldOfView = float32(perspective.Yfov * 180 / math.Pi)
 						camera.ZFar = float32(*perspective.Zfar)
 						camera.ZNear = float32(perspective.Znear)
 						camera.AspectRatio = float32(m.settings.Resolution()[0]) / float32(m.settings.Resolution()[1])

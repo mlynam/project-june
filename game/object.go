@@ -45,10 +45,10 @@ func (o *Object) Synchronize() {
 	scale := mgl32.Diag4(s.Vec4(1))
 	rotation := o.rotation.Mat4()
 	translation := mgl32.Mat4{
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		t[0], t[1], t[2], 1,
+		1, 0, 0, t[0],
+		0, 1, 0, t[1],
+		0, 0, 1, t[2],
+		0, 0, 0, 1,
 	}
 
 	o.location = scale.Mul4(rotation).Mul4(parent).Mul4(translation)

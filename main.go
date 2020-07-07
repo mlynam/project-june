@@ -20,5 +20,5 @@ func main() {
 		Manager:  &manager.Provider{},
 	})
 
-	e.Run("BoxTaurus")
+	e.Run("cube")
 }

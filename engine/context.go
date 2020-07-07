@@ -4,6 +4,7 @@ package engine
 type Context struct {
 	previousFrameTime float64
 	frameTime         float64
+	scene             Scene
 }
 
 // Delta returns the frame delta in seconds

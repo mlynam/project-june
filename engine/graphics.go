@@ -12,7 +12,9 @@ type Graphics interface {
 	Clear()
 
 	SetProgram(uint32)
+	SetScene(Scene)
 	Attribute(name string) (int32, bool)
 	Uniform(name string) (int32, bool)
+	SceneViewProjection() [16]float32
 	EnsureSuccessState()
 }

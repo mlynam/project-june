@@ -16,6 +16,7 @@ func (e *engine) Run(entry string) {
 
 	scene, world := manager.LoadStartScene(entry)
 
+	graphics.SetScene(scene)
 	context := &Context{
 		previousFrameTime: timer.GetTime(),
 		frameTime:         timer.GetTime(),
