@@ -29,11 +29,14 @@ func (e *engine) Run(entry string) {
 	defer platform.Terminate()
 	for !window.ShouldClose() {
 		context.frameTime = timer.GetTime()
+		done := make(chan bool, 1)
 
 		scene.SetupScene(graphics)
 
-		e.update(world, context)
+		e.update(done, world, context)
 		e.render(scene, graphics)
+
+		<-done
 
 		e.synchronize(world)
 
@@ -44,10 +47,12 @@ func (e *engine) Run(entry string) {
 	}
 }
 
-func (e *engine) update(world World, context *Context) {
+func (e *engine) update(done chan bool, world World, context *Context) {
 	for _, object := range world.Objects() {
 		object.Update(context)
 	}
+
+	done <- true
 }
 
 func (e *engine) render(s Scene, g Graphics) {

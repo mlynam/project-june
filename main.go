@@ -20,5 +20,5 @@ func main() {
 		Manager:  &manager.Provider{},
 	})
 
-	e.Run("cube")
+	e.Run("ColorCube")
 }

@@ -12,6 +12,8 @@ type Graphics struct {
 	program uint32
 	cache   map[string]int32
 	scene   engine.Scene
+
+	lastSetProgram uint32
 }
 
 // NewGraphics creates a new graphics instance
@@ -29,8 +31,10 @@ func (g *Graphics) Clear() {
 
 // UseProgram to render
 func (g *Graphics) UseProgram() {
-	gl.UseProgram(g.program)
-	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+	if g.lastSetProgram != g.program {
+		gl.UseProgram(g.program)
+		g.lastSetProgram = g.program
+	}
 }
 
 // Program returns the shader program currently attached to the graphics pipeline

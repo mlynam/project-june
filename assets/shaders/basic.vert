@@ -11,5 +11,5 @@ out vec3 vec_Color;
 
 void main(){
   gl_Position=projection*view*world*vec4(pos,1.);
-  vec_Color=color;
+  vec_Color=color.rgb;
 }

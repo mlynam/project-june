@@ -42,6 +42,7 @@ func LoadFromGLTFDoc(doc *gltf.Document, p *gltf.Primitive, locatable engine.Loc
 
 	var (
 		positions *bytes.Reader
+		colors    *bytes.Reader
 
 		vertices = make([]vertex.Vertex, 0)
 		indices  = make([]uint32, 0)
@@ -54,10 +55,17 @@ func LoadFromGLTFDoc(doc *gltf.Document, p *gltf.Primitive, locatable engine.Loc
 	}
 
 	positions, accessor := attributeReader(i, doc)
+
+	i, ok = p.Attributes["COLOR_0"]
+	if ok {
+		colors, _ = attributeReader(i, doc)
+	}
+
 	for len(vertices) < int(accessor.Count) {
 		vertex := vertex.Vertex{}
 
 		tryReadComponent(positions, &vertex.Position)
+		tryReadComponent(colors, &vertex.Color)
 
 		vertices = append(vertices, vertex)
 	}
