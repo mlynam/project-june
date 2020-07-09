@@ -5,27 +5,20 @@ in the startup state.
 package main
 
 import (
-	"runtime"
-
-	"github.com/mlynam/project-june/core"
+	"github.com/mlynam/project-june/engine"
 	"github.com/mlynam/project-june/graphics"
-	"github.com/mlynam/project-june/shader"
+	"github.com/mlynam/project-june/manager"
+	"github.com/mlynam/project-june/platform"
+	"github.com/mlynam/project-june/settings"
 )
 
 func main() {
-	runtime.LockOSThread()
+	e := engine.NewHost(&engine.HostProviders{
+		Platform: &platform.Provider{},
+		Graphics: &graphics.Provider{},
+		Settings: &settings.Provider{},
+		Manager:  &manager.Provider{},
+	})
 
-	init := core.Init{
-		Name:   "Project June",
-		Width:  1920,
-		Height: 1080,
-		Graphics: graphics.Init{
-			Shaders: map[shader.Type]string{
-				shader.Vertex:   "assets/shaders/basic.vert",
-				shader.Fragment: "assets/shaders/basic.frag",
-			},
-		},
-	}
-
-	core.New(&init).Config(config).Run()
+	e.Run("BoxTaurus")
 }
