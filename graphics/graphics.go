@@ -4,12 +4,14 @@ import (
 	"fmt"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
+	"github.com/mlynam/project-june/engine"
 )
 
 // Graphics elements
 type Graphics struct {
 	program uint32
 	cache   map[string]int32
+	scene   engine.Scene
 }
 
 // NewGraphics creates a new graphics instance
@@ -23,6 +25,12 @@ func NewGraphics(program uint32) *Graphics {
 // Clear the back buffer
 func (g *Graphics) Clear() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+}
+
+// UseProgram to render
+func (g *Graphics) UseProgram() {
+	gl.UseProgram(g.program)
+	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
 }
 
 // Program returns the shader program currently attached to the graphics pipeline
@@ -68,4 +76,14 @@ func (g *Graphics) EnsureSuccessState() {
 	if err != gl.NO_ERROR {
 		panic(err)
 	}
+}
+
+// SceneViewProjection from the scene camera
+func (g *Graphics) SceneViewProjection() [16]float32 {
+	return g.scene.SceneViewProjection()
+}
+
+// SetScene to be rendered
+func (g *Graphics) SetScene(s engine.Scene) {
+	g.scene = s
 }

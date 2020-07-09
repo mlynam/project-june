@@ -19,7 +19,7 @@ type Attribute struct {
 	Name       string
 	Size       uint32
 	Xtype      uint32
-	Stride     uint32
+	Stride     uintptr
 	Offset     int
 	Normalized bool
 }

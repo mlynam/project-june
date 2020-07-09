@@ -21,6 +21,9 @@ func NewScene(c *graphics.Camera) *Scene {
 
 // SetupScene for rendering
 func (s *Scene) SetupScene(g engine.Graphics) {
+	g.Clear()
+	g.UseProgram()
+
 	s.camera.SetTransformations(g.Program())
 }
 
@@ -32,4 +35,12 @@ func (s *Scene) Renderables() []engine.Renderable {
 // AddRenderable to the scene
 func (s *Scene) AddRenderable(r engine.Renderable) {
 	s.renderables = append(s.renderables, r)
+}
+
+// SceneViewProjection of the scene camera
+func (s *Scene) SceneViewProjection() [16]float32 {
+	projection := s.camera.Projection()
+	view := s.camera.View()
+
+	return projection.Mul4(view)
 }

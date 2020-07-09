@@ -16,6 +16,7 @@ func (e *engine) Run(entry string) {
 
 	scene, world := manager.LoadStartScene(entry)
 
+	graphics.SetScene(scene)
 	context := &Context{
 		previousFrameTime: timer.GetTime(),
 		frameTime:         timer.GetTime(),
@@ -25,7 +26,6 @@ func (e *engine) Run(entry string) {
 	for !window.ShouldClose() {
 		context.frameTime = timer.GetTime()
 
-		graphics.Clear()
 		scene.SetupScene(graphics)
 
 		e.update(world, context)
@@ -40,8 +40,8 @@ func (e *engine) Run(entry string) {
 }
 
 func (e *engine) update(world World, context *Context) {
-	for _, o := range world.Objects() {
-		o.Update(context)
+	for _, object := range world.Objects() {
+		object.Update(context)
 	}
 }
 
@@ -52,7 +52,7 @@ func (e *engine) render(s Scene, g Graphics) {
 }
 
 func (e *engine) synchronize(w World) {
-	for _, u := range w.Objects() {
-		u.Synchronize()
+	for _, object := range w.Objects() {
+		object.Synchronize()
 	}
 }

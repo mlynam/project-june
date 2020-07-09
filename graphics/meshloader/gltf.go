@@ -1,9 +1,10 @@
 package meshloader
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
-	"log"
-	"strings"
+	"io"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/mlynam/project-june/engine"
@@ -13,7 +14,7 @@ import (
 )
 
 var (
-	sizes = map[gltf.AccessorType]uint32{
+	sizes = map[gltf.AccessorType]int{
 		gltf.AccessorScalar: 1,
 		gltf.AccessorVec2:   2,
 		gltf.AccessorVec3:   3,
@@ -33,67 +34,77 @@ var (
 	}
 )
 
-var (
-	supported = []string{
-		"POSITION",
-		"NORMAL",
-		"TANGENT",
-		"TEXCOORD_0",
-	}
-)
-
 // LoadFromGLTFDoc loads a mesh from a gltf primitive into graphics memory
 func LoadFromGLTFDoc(doc *gltf.Document, p *gltf.Primitive, locatable engine.Locatable) *graphics.Mesh {
 	if p.Indices == nil {
 		panic(fmt.Errorf("unindexed mesh unsupported"))
 	}
 
-	data := make([]byte, 0)
-	attributes := make([]vertex.Attribute, 0)
+	var (
+		positions *bytes.Reader
 
-	for _, attr := range supported {
-		i, ok := p.Attributes[attr]
-		if !ok {
-			continue
-		}
+		vertices = make([]vertex.Vertex, 0)
+		indices  = make([]uint32, 0)
+	)
 
-		accessor := doc.Accessors[i]
-		if accessor.BufferView == nil {
-			log.Printf("WARN invalid accessor data for %v", accessor.Name)
-			continue
-		}
-
-		view := doc.BufferViews[*accessor.BufferView]
-		buffer := doc.Buffers[view.Buffer]
-		slice := buffer.Data[view.ByteOffset : view.ByteOffset+view.ByteLength]
-
-		name := strings.ToLower(attr)
-
-		attributes = append(attributes, vertex.Attribute{
-			Name:       name,
-			Normalized: accessor.Normalized,
-			Offset:     len(data),
-			Stride:     view.ByteStride,
-			Size:       sizes[accessor.Type],
-			Xtype:      xtypes[accessor.ComponentType],
-		})
-
-		data = append(data, slice...)
+	// Setup position
+	i, ok := p.Attributes["POSITION"]
+	if !ok {
+		panic("position data not found")
 	}
 
-	accessor := doc.Accessors[*p.Indices]
-	view := doc.BufferViews[*accessor.BufferView]
-	buffer := doc.Buffers[view.Buffer]
-	index := buffer.Data[view.ByteOffset : view.ByteOffset+view.ByteLength]
+	positions, accessor := attributeReader(i, doc)
+	for len(vertices) < int(accessor.Count) {
+		vertex := vertex.Vertex{}
 
-	mesh := graphics.New(data, index, locatable)
+		tryReadComponent(positions, &vertex.Position)
 
-	for _, attr := range attributes {
-		mesh.AddAttribute(attr)
+		vertices = append(vertices, vertex)
 	}
 
-	mesh.SetElementCount(accessor.Count)
-	mesh.SetElementType(xtypes[accessor.ComponentType])
+	index, accessor := attributeReader(*p.Indices, doc)
+	for len(indices) < int(accessor.Count) {
+		var value uint32
+		switch accessor.ComponentType {
+		case gltf.ComponentUbyte:
+			var data uint8
+			tryReadComponent(index, &data)
+			value = uint32(data)
+		case gltf.ComponentUshort:
+			var data uint16
+			tryReadComponent(index, &data)
+			value = uint32(data)
+		case gltf.ComponentUint:
+			var data uint32
+			tryReadComponent(index, &data)
+			value = uint32(data)
+		}
+
+		indices = append(indices, value)
+	}
+
+	mesh := graphics.New(vertices, indices, locatable)
 
 	return mesh
+}
+
+func attributeReader(accessorIndex uint32, doc *gltf.Document) (*bytes.Reader, *gltf.Accessor) {
+	accessor := doc.Accessors[accessorIndex]
+	view := doc.BufferViews[*accessor.BufferView]
+	buffer := doc.Buffers[view.Buffer]
+	slice := buffer.Data[view.ByteOffset : view.ByteOffset+view.ByteLength]
+	return bytes.NewReader(slice), accessor
+}
+
+func tryReadComponent(b *bytes.Reader, data interface{}) {
+	if b == nil {
+		return
+	}
+
+	err := binary.Read(b, binary.LittleEndian, data)
+
+	switch err {
+	case io.EOF, io.ErrUnexpectedEOF:
+		panic("reader EOF")
+	}
 }
