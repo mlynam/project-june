@@ -25,7 +25,7 @@ func (m *Manager) LoadStartScene(name string) (engine.Scene, engine.World) {
 		panic(fmt.Errorf("Failed to load the start scene: %v", path))
 	}
 
-	camera := &graphics.Camera{}
+	camera := graphics.NewCamera(m.graphics)
 	world := game.NewWorld()
 	scene := game.NewScene(camera)
 
@@ -76,7 +76,7 @@ func (m *Manager) LoadStartScene(name string) (engine.Scene, engine.World) {
 		}
 
 		objects[i] = object
-		world.AddObject(object)
+		world.AddObject(&game.Rotator{Object: object})
 	}
 
 	return scene, world

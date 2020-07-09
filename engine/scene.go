@@ -4,5 +4,4 @@ package engine
 type Scene interface {
 	SetupScene(Graphics)
 	Renderables() []Renderable
-	SceneViewProjection() [16]float32
 }

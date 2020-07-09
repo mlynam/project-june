@@ -1,5 +1,7 @@
 package engine
 
+import "runtime"
+
 // engine runs the game
 type engine struct {
 	providers *HostProviders
@@ -7,6 +9,8 @@ type engine struct {
 
 // Run the game starting with the given entry scene
 func (e *engine) Run(entry string) {
+	runtime.LockOSThread()
+
 	settings := e.providers.Settings.New()
 	window := e.providers.Platform.NewWindow(settings)
 	timer := e.providers.Platform.NewTimer(settings)

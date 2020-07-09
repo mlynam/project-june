@@ -78,11 +78,6 @@ func (g *Graphics) EnsureSuccessState() {
 	}
 }
 
-// SceneViewProjection from the scene camera
-func (g *Graphics) SceneViewProjection() [16]float32 {
-	return g.scene.SceneViewProjection()
-}
-
 // SetScene to be rendered
 func (g *Graphics) SetScene(s engine.Scene) {
 	g.scene = s
