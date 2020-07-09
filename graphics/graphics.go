@@ -27,6 +27,12 @@ func (g *Graphics) Clear() {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 }
 
+// UseProgram to render
+func (g *Graphics) UseProgram() {
+	gl.UseProgram(g.program)
+	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+}
+
 // Program returns the shader program currently attached to the graphics pipeline
 func (g *Graphics) Program() uint32 {
 	return g.program

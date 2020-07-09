@@ -9,6 +9,6 @@ type Provider struct{}
 func (p *Provider) New() engine.Settings {
 	return &Settings{
 		name:       "Project June",
-		resolution: [2]uint16{1440, 960},
+		resolution: [2]uint16{600, 600},
 	}
 }

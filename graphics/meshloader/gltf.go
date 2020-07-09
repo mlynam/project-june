@@ -42,13 +42,9 @@ func LoadFromGLTFDoc(doc *gltf.Document, p *gltf.Primitive, locatable engine.Loc
 
 	var (
 		positions *bytes.Reader
-		normals   *bytes.Reader
-		uvs       *bytes.Reader
-		reference vertex.Vertex
 
-		vertices   = make([]vertex.Vertex, 0)
-		indices    = make([]uint, 0)
-		attributes = make([]vertex.Attribute, 0)
+		vertices = make([]vertex.Vertex, 0)
+		indices  = make([]uint32, 0)
 	)
 
 	// Setup position
@@ -58,56 +54,36 @@ func LoadFromGLTFDoc(doc *gltf.Document, p *gltf.Primitive, locatable engine.Loc
 	}
 
 	positions, accessor := attributeReader(i, doc)
-	attributes = append(attributes, reference.AttributeFor("position", accessor.Normalized))
-
-	// Normals and UVs are optional and therefore we don't panic if we don't find them
-	i, ok = p.Attributes["NORMAL"]
-	if ok {
-		normals, accessor = attributeReader(i, doc)
-		attributes = append(attributes, reference.AttributeFor("normal", accessor.Normalized))
-	}
-	i, ok = p.Attributes["TEXCOORD_0"]
-	if ok {
-		uvs, accessor = attributeReader(i, doc)
-		attributes = append(attributes, reference.AttributeFor("uv", accessor.Normalized))
-	}
-
 	for len(vertices) < int(accessor.Count) {
 		vertex := vertex.Vertex{}
 
 		tryReadComponent(positions, &vertex.Position)
-		tryReadComponent(normals, &vertex.Normal)
-		tryReadComponent(uvs, &vertex.UV)
 
 		vertices = append(vertices, vertex)
 	}
 
 	index, accessor := attributeReader(*p.Indices, doc)
 	for len(indices) < int(accessor.Count) {
-		var value uint
+		var value uint32
 		switch accessor.ComponentType {
 		case gltf.ComponentUbyte:
 			var data uint8
 			tryReadComponent(index, &data)
-			value = uint(data)
+			value = uint32(data)
 		case gltf.ComponentUshort:
 			var data uint16
 			tryReadComponent(index, &data)
-			value = uint(data)
+			value = uint32(data)
 		case gltf.ComponentUint:
 			var data uint32
 			tryReadComponent(index, &data)
-			value = uint(data)
+			value = uint32(data)
 		}
 
 		indices = append(indices, value)
 	}
 
 	mesh := graphics.New(vertices, indices, locatable)
-
-	for _, attr := range attributes {
-		mesh.AddAttribute(attr)
-	}
 
 	return mesh
 }

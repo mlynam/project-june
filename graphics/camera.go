@@ -13,21 +13,23 @@ type Camera struct {
 	ZFar        float32
 	ZNear       float32
 	AspectRatio float32
+
+	view, projection [16]float32
 }
 
 // SetTransformations sets the `camera` and `projection` uniform mat4
 //  values in the shader program
 func (c *Camera) SetTransformations(program uint32) {
-	index := gl.GetUniformLocation(program, gl.Str("camera\x00"))
+	index := gl.GetUniformLocation(program, gl.Str("view\x00"))
 	if index > -1 {
-		camera := c.View()
-		gl.UniformMatrix4fv(index, 1, false, &camera[0])
+		c.view = c.View()
+		gl.UniformMatrix4fv(index, 1, false, &c.view[0])
 	}
 
 	index = gl.GetUniformLocation(program, gl.Str("projection\x00"))
 	if index > -1 {
-		projection := c.Projection()
-		gl.UniformMatrix4fv(index, 1, false, &projection[0])
+		c.projection = c.Projection()
+		gl.UniformMatrix4fv(index, 1, false, &c.projection[0])
 	}
 }
 

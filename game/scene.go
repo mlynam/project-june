@@ -21,6 +21,9 @@ func NewScene(c *graphics.Camera) *Scene {
 
 // SetupScene for rendering
 func (s *Scene) SetupScene(g engine.Graphics) {
+	g.Clear()
+	g.UseProgram()
+
 	s.camera.SetTransformations(g.Program())
 }
 
