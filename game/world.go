@@ -20,6 +20,6 @@ func (w *World) Objects() []engine.Object {
 }
 
 // AddObject to the world
-func (w *World) AddObject(o *Object) {
+func (w *World) AddObject(o engine.Object) {
 	w.objects = append(w.objects, o)
 }

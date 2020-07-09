@@ -30,6 +30,7 @@ func (e *engine) Run(entry string) {
 
 		e.update(world, context)
 		e.render(scene, graphics)
+
 		e.synchronize(world)
 
 		window.SwapBuffers()

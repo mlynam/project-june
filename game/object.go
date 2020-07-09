@@ -19,7 +19,7 @@ type Object struct {
 
 // NewObject object from the given propeties
 func NewObject(name string, position, scale mgl32.Vec3, rotation mgl32.Quat) *Object {
-	return &Object{
+	object := &Object{
 		name:     name,
 		position: position,
 		scale:    scale,
@@ -28,6 +28,10 @@ func NewObject(name string, position, scale mgl32.Vec3, rotation mgl32.Quat) *Ob
 		parent:   nil,
 		children: make([]*Object, 0),
 	}
+
+	object.Synchronize()
+
+	return object
 }
 
 // Update the object

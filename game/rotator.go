@@ -11,9 +11,13 @@ type Rotator struct {
 	angle float64
 }
 
+var (
+	unitY = mgl32.Vec3{0, 1, 0}.Normalize()
+)
+
 // Update the rotating cube
-func (r *Rotator) Update(c engine.Context) {
+func (r *Rotator) Update(c *engine.Context) {
 	r.angle += c.Delta()
-	rotation := mgl32.QuatRotate(float32(r.angle), mgl32.Vec3{0, 1, 1}.Normalize())
+	rotation := mgl32.QuatRotate(float32(r.angle), unitY)
 	r.rotation = rotation
 }
